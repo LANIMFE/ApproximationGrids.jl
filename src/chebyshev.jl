@@ -57,18 +57,18 @@ function interpolate(g::ChebyshevGrid, v::AbstractVector, x′)
 
     return muladd(x / 2, b₁, c[1] - b₂)
 end
-            
+
 reverse_plan(p, v::AbstractVector{Float64}, n) = p * reverse(v)
 function reverse_plan(p, v::AbstractVector{S}, n) where {S}
     r = reinterpret(eltype(S), reverse(v))
     m = length(r)
     d = div(m, n)
     w = permutedims(reshape(r, d, n))
-    
+
     for i in 1:d
         p * view(w, :, i) # `p` is an in-place `FFTW` plan which mutates `w`
         r[i:d:m] = view(w, :, i)
     end
-    
+
     return reinterpret(S, r)
 end
